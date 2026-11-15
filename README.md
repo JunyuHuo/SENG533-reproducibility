@@ -24,6 +24,20 @@ cmp summary.json build/summary.json
 
 The archive contains YCSB status and summary records, `sadf` measurements, and run metadata. Each file retains the observations used by the parser. Collection hostnames are replaced with role labels. `runs.csv` uses archive-relative run paths. A generated CSV uses the directory you supplied to the parser in the `run_dir` column. `timeseries.csv` contains 5,184 status rows from the discarded warm-ups and measured runs.
 
+## Verify completeness and rebuild figures
+
+```sh
+python3 analysis/verify.py
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements-figures.txt
+python analysis/plot.py
+```
+
+The verifier checks SHA-256 checksums, every expected configuration, all 162 archived run records, all fields in both regenerated CSVs, and the summary. It does not treat operation failures as missing runs: the three failed operations in two Cassandra runs remain in the data and the paper.
+
+The plotter rebuilds all nine data charts as vector PDFs and PNGs plus `plot-data.csv`. [Figure provenance](figures/README.md) maps every paper graphic to its source and explains how to build the two editable TikZ diagrams. [Verification notes](VERIFICATION.md) document the checked scope and remaining limitations.
+
 ## Repeat data collection
 
 Provision two Ubuntu 22.04.5 LTS x86-64 VMs on a private network. Use 4 vCPUs and a 100 GB boot volume per VM, with 16 GiB RAM on both VMs for the baseline. For Experiment 2, increase only the database VM to 32 GiB RAM. Use MongoDB 7.0.45, Cassandra 4.1.12, Java 11, sysstat 12.5.2, and [YCSB 0.17.0](https://github.com/brianfrankcooper/YCSB/releases/tag/0.17.0) with both the `mongodb` and `cassandra-cql` bindings. Check the exact database package versions before running. The bootstrap script selects the available package releases in the 7.0 and 4.1 series.
@@ -54,4 +68,8 @@ The 12 configuration files record each original launch. Complete the six `base` 
 | `pipeline/config/`, `pipeline/workloads/` | Recorded launch settings and workload definitions |
 | `pipeline/run_launch.sh`, `pipeline/parse_results.py` | Collection and aggregation |
 | `analysis/summarize.py` | Recomputes the principal paper results |
+| `analysis/verify.py` | Checks integrity and rebuilds both complete datasets |
+| `analysis/plot.py`, `requirements-figures.txt` | Reproducible plotting and tested dependency versions |
+| `figures/` | All paper data plots, plotting values, and conceptual diagram source |
+| `SHA256SUMS` | Integrity checksums for datasets, plotting values, and figures |
 | `db-server-setup/` | Ubuntu database setup, verification, and service switcher |

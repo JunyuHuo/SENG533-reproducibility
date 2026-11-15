@@ -1,0 +1,4 @@
+# Tested with Python 3.12. Numerical reproduction uses only the standard library.
+matplotlib==3.11.2
+numpy==2.5.4
+pillow==13.0.0

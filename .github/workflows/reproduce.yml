@@ -1,0 +1,26 @@
+name: Reproduce archived results
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-figures.txt
+      - name: Verify complete archived measurements
+        run: python analysis/verify.py
+      - name: Install plotting dependencies
+        run: python -m pip install -r requirements-figures.txt
+      - name: Rebuild and compare plotted values
+        run: |
+          python analysis/plot.py
+          cmp figures/plot-data.csv build/figures/plot-data.csv
+      - name: Check shell syntax
+        run: bash -n pipeline/run_launch.sh db-server-setup/*.sh db-server-setup/seng533-switch-db
