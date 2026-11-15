@@ -1,0 +1,13 @@
+# YCSB B (read-heavy): 95% read / 5% update
+# recordcount, operationcount and maxexecutiontime are set by run_launch.sh.
+workload=site.ycsb.workloads.CoreWorkload
+fieldcount=10
+fieldlength=100
+readallfields=true
+writeallfields=false
+readproportion=0.95
+updateproportion=0.05
+insertproportion=0
+scanproportion=0
+readmodifywriteproportion=0
+requestdistribution=zipfian

@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+if [[ "${EUID}" -ne 0 ]]; then
+  exec sudo "$0" "$@"
+fi
+
+mode="${1:-status}"
+case "$mode" in
+  mongo|mongodb)
+    systemctl stop cassandra
+    systemctl start mongod
+    for _ in $(seq 1 60); do
+      mongosh --quiet --host 127.0.0.1 --port 27017 --eval 'db.runCommand({ping:1}).ok' 2>/dev/null | grep -qx 1 && break
+      sleep 1
+    done
+    mongosh --quiet --host 127.0.0.1 --port 27017 --eval 'db.runCommand({ping:1})'
+    ;;
+  cassandra)
+    systemctl stop mongod
+    systemctl start cassandra
+    for _ in $(seq 1 90); do
+      cqlsh 127.0.0.1 9042 -e 'DESCRIBE CLUSTER' >/dev/null 2>&1 && break
+      sleep 2
+    done
+    cqlsh 127.0.0.1 9042 -e 'SELECT cluster_name, data_center, host_id FROM system.local;'
+    ;;
+  stop)
+    systemctl stop mongod cassandra
+    ;;
+  status)
+    ;;
+  *)
+    echo "Usage: $0 {mongo|cassandra|stop|status}" >&2
+    exit 2
+    ;;
+esac
+
+echo "mongod=$(systemctl is-active mongod 2>/dev/null || true)"
+echo "cassandra=$(systemctl is-active cassandra 2>/dev/null || true)"
+ss -lnt | awk 'NR == 1 || /:(27017|9042)[[:space:]]/'

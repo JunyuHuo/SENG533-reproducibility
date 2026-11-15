@@ -1,0 +1,13 @@
+# Custom write-heavy: 5% read / 95% update (no standard YCSB workload is write-heavy)
+# recordcount, operationcount and maxexecutiontime are set by run_launch.sh.
+workload=site.ycsb.workloads.CoreWorkload
+fieldcount=10
+fieldlength=100
+readallfields=true
+writeallfields=false
+readproportion=0.05
+updateproportion=0.95
+insertproportion=0
+scanproportion=0
+readmodifywriteproportion=0
+requestdistribution=zipfian
