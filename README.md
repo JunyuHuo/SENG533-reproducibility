@@ -10,7 +10,7 @@ Run from the repository root with Python 3.8 or later. This workflow needs neith
 python3 analysis/summarize.py > summary.json
 ```
 
-The JSON includes throughput and mean response-time curves, observed baseline peaks with sample standard deviations and 95% Student's t intervals, matched-thread memory upgrade comparisons, read/update tail latency and resource metrics, operation errors, and Little's Law discrepancies. The cost estimates use the paper's reported historical rates of CAD 0.272604 and 0.304058 per hour. They compare each baseline peak with the corresponding repeated upgraded point. The underlying account billing export is outside this package.
+The JSON includes throughput and mean response-time curves, observed baseline peaks with sample standard deviations and 95% Student's t intervals, matched-thread memory upgrade comparisons, read/update tail latency and resource metrics, operation errors, and Little's Law discrepancies. The cost estimates derive historical rates of CAD 0.2726048 and 0.3040592 per hour from the sanitized OCI cost and usage exports in `data/cost/`. They compare each baseline peak with the corresponding repeated upgraded point. `python3 analysis/cost.py` shows the source intervals and rate derivation. See [cost provenance](data/cost/README.md); these are sampled exports, not a complete account billing history.
 
 To rebuild both CSVs from the measurements:
 
@@ -67,6 +67,7 @@ The 12 configuration files record each original launch. Complete the six `base` 
 | `data/runs.csv`, `data/timeseries.csv` | Reference aggregate and time-series datasets |
 | `pipeline/config/`, `pipeline/workloads/` | Recorded launch settings and workload definitions |
 | `pipeline/run_launch.sh`, `pipeline/parse_results.py` | Collection and aggregation |
+| `data/cost/`, `analysis/cost.py` | Sanitized billing samples and full-hour compute rate derivation |
 | `analysis/summarize.py` | Recomputes the principal paper results |
 | `analysis/verify.py` | Checks integrity and rebuilds both complete datasets |
 | `analysis/plot.py`, `requirements-figures.txt` | Reproducible plotting and tested dependency versions |

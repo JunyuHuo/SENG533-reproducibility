@@ -10,6 +10,8 @@ import sys
 import tarfile
 import tempfile
 
+from cost import hourly_rates
+
 ROOT=Path(__file__).resolve().parents[1]
 
 def read(path):
@@ -25,6 +27,10 @@ def main():
         digest,name=line.split('  ',1)
         if hashlib.sha256((ROOT/name).read_bytes()).hexdigest()!=digest:
             raise SystemExit(f'Checksum mismatch: {name}')
+    rates = hourly_rates()
+    if rates != {'base': 0.2726048, 'upgraded': 0.3040592}:
+        raise SystemExit(f'Historical hourly rates changed: {rates}')
+    print('PASS: OCI line-item arithmetic and complete-hour compute rates')
     actual=read(ROOT/'data/runs.csv')
     keys=[(r['db'],r['server_size'],int(r['launch']),r['workload'],int(r['threads'])) for r in actual]
     expected=set()

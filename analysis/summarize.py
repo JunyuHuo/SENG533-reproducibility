@@ -7,10 +7,11 @@ import json
 from math import sqrt
 from pathlib import Path
 from statistics import mean, median, stdev
+from cost import hourly_rates
 
 ROOT = Path(__file__).resolve().parents[1]
 THROUGHPUT = 'throughput_ops_s'
-RATES = {'base': 0.272604, 'upgraded': 0.304058}  # CAD/hour, as reported in the paper
+RATES = hourly_rates()  # Derived from the sanitized historical OCI usage exports.
 
 
 def values(runs, field):

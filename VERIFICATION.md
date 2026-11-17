@@ -20,13 +20,11 @@ work vary. No new cloud collection was performed for this verification.
 
 The package retains all measurements consumed by the parser, but does not contain
 the ten-million-record database dump, a full VM image, per-request raw latency
-samples, account billing export, or every diagnostic line from the original logs.
+samples, complete account billing history, or every diagnostic line from the original logs.
 YCSB generates the synthetic dataset. p95/p99 are recorded histogram percentiles;
 a pooled percentile cannot be reconstructed from them.
 
-The reported historical compute rates are explicit inputs to cost arithmetic.
-The public package cannot independently substantiate those rates without the
-billing export. Database installation scripts select the documented package
+The sanitized cost and usage samples added on 2026-11-17 substantiate the historical hourly compute rates. `analysis/cost.py` checks every exported line item and uses three complete compute hours per configuration, excluding two partial-usage upgraded intervals. The exact rates are CAD 0.2726048/hour and 0.3040592/hour; the cost table's displayed values and percentage reductions remain unchanged. These samples are not full-day invoices or a complete billing history. Database installation scripts select the documented package
 series; verify/install the stated exact versions before collecting new results.
 The original VM image, kernel, storage settings, and dependency resolution are
 not captured as an immutable environment.
